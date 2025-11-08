@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ThinkGraph - AI 기반 아이디어 확장 플랫폼 데모</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .title {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.5rem;
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Features Grid */
+        .features {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+            margin-bottom: 3rem;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2rem;
+            border-radius: 15px;
+            transition: transform 0.3s ease, background 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-card p {
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Demo Section */
+        .demo {
+            background: white;
+            color: #111827;
+            border-radius: 20px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .demo h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: #111827;
+        }
+
+        .mindmap-demo {
+            background: #f9fafb;
+            border-radius: 15px;
+            padding: 2rem;
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .node {
+            position: absolute;
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: move;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        .node:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .node.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+        }
+
+        .node.ai-generated {
+            background: #8B5CF6;
+            color: white;
+        }
+
+        .node h4 {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .node p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        .node-badge {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        .node-score {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+        }
+
+        .connection {
+            position: absolute;
+            height: 2px;
+            background: #9CA3AF;
+            transform-origin: left center;
+        }
+
+        /* Tech Stack */
+        .tech-stack {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .tech-stack h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .tech-category {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .tech-category h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            color: #E0E7FF;
+        }
+
+        .tech-category ul {
+            list-style: none;
+        }
+
+        .tech-category li {
+            padding: 0.5rem 0;
+            opacity: 0.9;
+        }
+
+        .tech-category li:before {
+            content: "✓ ";
+            color: #10B981;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        /* Buttons */
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            border: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title">ThinkGraph</h1>
+            <p class="subtitle">AI 기반 아이디어 확장 플랫폼</p>
+            <p class="description">
+                단순한 시각화를 넘어 AI가 아이디어 확장, 분석, 우선순위 제안까지 지원하는 차세대 사고 도구
+            </p>
+            <div class="cta-buttons">
+                <a href="https://github.com/k1300k/ai-dashboard" class="btn btn-primary" target="_blank">
+                    GitHub에서 보기
+                </a>
+                <a href="https://github.com/k1300k/ai-dashboard/pull/1" class="btn btn-secondary" target="_blank">
+                    Pull Request 보기
+                </a>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="features">
+            <h2>주요 기능</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✨</div>
+                    <h3>AI 아이디어 확장</h3>
+                    <p>선택한 노드 기반으로 GPT-4가 관련 아이디어 5개를 자동 생성합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>AI 분석 및 평가</h3>
+                    <p>아이디어별 임팩트, 실현가능성, 우선순위 점수를 AI가 산출합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>스마트 우선순위</h3>
+                    <p>AI 평가 기반으로 어떤 아이디어부터 실행할지 제안합니다</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>AI 요약</h3>
+                    <p>전체 마인드맵을 분석하여 핵심 인사이트를 요약합니다</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo -->
+        <div class="demo">
+            <h2>마인드맵 데모</h2>
+            <div class="mindmap-demo">
+                <!-- Central Node -->
+                <div class="node primary" style="top: 200px; left: 500px;">
+                    <h4>새로운 AI 서비스 아이디어</h4>
+                    <p>사용자의 창의적 사고를 지원하는 플랫폼</p>
+                </div>
+
+                <!-- AI Generated Nodes -->
+                <div class="node ai-generated" style="top: 50px; left: 200px;">
+                    <h4>개인화 학습 도우미</h4>
+                    <p>사용자의 학습 패턴을 분석하여 맞춤형 커리큘럼 제공</p>
+                    <div class="node-badge">AI 생성</div>
+                    <div class="node-score">우선순위: 8.5/10</div>
+                </div>
+
+                <div class="node ai-generated" style="top: 100px; left: 800px;">
+                    <h4>크리에이티브 브레인스토밍</h4>
+                    <p>팀 협업을 위한 실시간 아이디어 공유 공간</p>
+                    <div class="node-badge">AI 생성</div>
+                    <div class="node-score">우선순위: 7.2/10</div>
+                </div>
+
+                <div class="node ai-generated" style="top: 350px; left: 150px;">
+                    <h4>자동 문서화 시스템</h4>
+                    <p>아이디어를 자동으로 구조화된 문서로 변환</p>
+                    <div class="node-badge">AI 생성</div>
+                    <div class="node-score">우선순위: 6.8/10</div>
+                </div>
+
+                <div class="node ai-generated" style="top: 300px; left: 850px;">
+                    <h4>시각적 프로젝트 관리</h4>
+                    <p>아이디어에서 실행까지 전 과정을 시각화</p>
+                    <div class="node-badge">AI 생성</div>
+                    <div class="node-score">우선순위: 7.9/10</div>
+                </div>
+
+                <div class="node" style="top: 420px; left: 500px;">
+                    <h4>모바일 앱 개발</h4>
+                    <p>언제 어디서나 아이디어를 기록하고 확장</p>
+                    <div class="node-score">임팩트: 9/10 | 실현가능성: 6/10</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tech Stack -->
+        <div class="tech-stack">
+            <h2>기술 스택</h2>
+            <div class="tech-grid">
+                <div class="tech-category">
+                    <h3>Backend</h3>
+                    <ul>
+                        <li>FastAPI 0.109.0</li>
+                        <li>SQLAlchemy 2.0.25 (Async)</li>
+                        <li>PostgreSQL 15+</li>
+                        <li>Redis 7+</li>
+                        <li>OpenAI GPT-4</li>
+                        <li>Alembic Migration</li>
+                    </ul>
+                </div>
+                <div class="tech-category">
+                    <h3>Frontend</h3>
+                    <ul>
+                        <li>Vue.js 3.4.15</li>
+                        <li>TypeScript 5.3.3</li>
+                        <li>Vite 5.0.11</li>
+                        <li>Pinia 2.1.7</li>
+                        <li>Element Plus 2.5.6</li>
+                        <li>Vue Flow 1.33.5</li>
+                    </ul>
+                </div>
+                <div class="tech-category">
+                    <h3>DevOps</h3>
+                    <ul>
+                        <li>Docker & Docker Compose</li>
+                        <li>GitHub Actions (예정)</li>
+                        <li>Nginx (프록시)</li>
+                        <li>Git (버전 관리)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple animations
+        document.addEventListener('DOMContentLoaded', function() {
+            const nodes = document.querySelectorAll('.node');
+            nodes.forEach((node, index) => {
+                setTimeout(() => {
+                    node.style.opacity = '0';
+                    node.style.transform = 'scale(0.8)';
+                    setTimeout(() => {
+                        node.style.transition = 'all 0.5s ease';
+                        node.style.opacity = '1';
+                        node.style.transform = 'scale(1)';
+                    }, 50);
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
